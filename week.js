@@ -25,7 +25,6 @@ var Week = function(displayWeekPosition) {
 				return true
 			} 
 		}
-
 		return false
 	}
 

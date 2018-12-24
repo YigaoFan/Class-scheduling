@@ -23,7 +23,7 @@ window.addEventListener('mousedown', function(event) {
 })
 
 var sreen = Screen(document.querySelector('#id-canvas').getContext('2d'), 8, 8)
-var weekManagement = WeekManagement()
+var weekManagement = WeekManagement(Screen())
 
 document.querySelector('#id-add-day', function('click', function(event) {
 	weekManagement.addWeek()
