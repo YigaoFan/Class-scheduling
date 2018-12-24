@@ -1,28 +1,38 @@
-var WeekManagement = function (argument) {
+var WeekManagement = function (screen) {
 	var o = {
 		weekArray: [
-		Week(),
+			Week(screen.giveOneWeekDisplayPosition()),
 		],
 	}
 
 	o.addWeek = function() {
-		o.weekArray.push(Week())
+		var week = Week(screen.giveOneWeekDisplayPosition())
+		o.weekArray.push(week)
 	}
 
+	//TODO:可能暂时并没删除中间结点的需求
 	o.removeWeek = function(index) {
-		//o.weekArray.remove(index)
+		o.weekArray[index].destoryDisplayData()
+		o.weekArray.splice(index, 1)
 	}
 
-	o.getWeekArray = function() {
-		reurn o.weekArray
-	}
+	//o.getWeekArray = function() {
+	//	reurn o.weekArray
+	//}
 
 	o.display = function() {
 		for (var i = 0; i < o.weekArray.length; i++) {
 			o.weekArray[i].display()
-			// 类似于换行，是否维护一个全局的显示器对象
-			screen.newLine()
 		}
+	}
+
+	o.ifInThenShow = function(mouse) {
+		for (int i = 0; i < o.weekArray.length; ++i) {
+			if (o.weekArray[i].ifInThenShow(mouse)) {
+				return true
+			}
+		}
+		return false
 	}
 
 	return o

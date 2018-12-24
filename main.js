@@ -34,11 +34,11 @@ var FanGua = function(dayRect, dayRectList) {
 }
 
 var __main = function() {
-  var = 
+  var weekManagement = WeekManagement();
   var dayRect = DayRect(10, 10, 40, 200)
   var dayRectList = [dayRect, ]
   // log(dayRectList)
-  var gua = FanGua(dayRect, dayRectList)
+  var gua = FanGua(weekManagement)
 
   var mousePos = {
     inRect: false,
