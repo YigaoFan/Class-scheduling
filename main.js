@@ -49,7 +49,7 @@ var __main = function() {
 
   // 如果想把 Event也给打包到 FanGua里面，需要
   // 需要注册鼠标事件，然后产生相应的监听器
-  // 在 g里面把一些变量放进去，一旦事件触发，改变变量
+  // 在 g 里面把一些变量放进去，一旦事件触发，改变变量
   // draw的时候再去检测相应的变量，可以把注册变量的权力放给外面
   window.addEventListener('mousemove', function(event) {
     // 6 为手动校准量，否则感觉是鼠标中部在操作
@@ -127,9 +127,11 @@ var __main = function() {
       }
     }
   })
+
   gua.update = function() {
 
   }
+
   gua.draw = function(context) {
     //draw
     for (var i = 0; i < dayRectList.length; i++) {
