@@ -16,7 +16,7 @@ var Screen = function() {
     return handleRecord
   }
 
-  var registerInShapeList = function(shape) {
+  var registerInRectList = function(shape) {
     var o = {
       shape: shape,
       handle: o.genHandle(),
@@ -64,7 +64,7 @@ var Screen = function() {
     // 	x,
     // 	y,
     // ]
-    // return o.registerInShapeList(line)
+    // return o.registerInRectList(line)
   }
 
   o.deleteLine = function() {
@@ -82,7 +82,7 @@ var Screen = function() {
 
     // Update point
     point[0] += Width
-    return o.registerInShapeList(rect)
+    return o.registerInRectList(rect)
   }
 
   o.deleteRect = function(handle = -1) {
