@@ -23,16 +23,16 @@ window.addEventListener('mousedown', function(event) {
 })
 
 var sreen = Screen(document.querySelector('#id-canvas').getContext('2d'), 8, 8)
-var weekManagement = WeekManagement(Screen())
+var weekManagement = WeekManagement(sreen)
 
 // operation button
-document.querySelector('#id-add-day', function('click', function(event) {
+document.querySelector('#id-add-day').addEventListener('click', function(event) {
   weekManagement.addWeek()
-}))
+})
 
-document.querySelector('#id-del-day', function('click', function(event) {
+document.querySelector('#id-del-day').addEventListener('click', function(event) {
   weekManagement.removeWeek()
-}))
+})
 
 var __main = function() {
   var canvas = document.querySelector('#id-canvas')

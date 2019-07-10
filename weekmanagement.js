@@ -1,4 +1,4 @@
-var WeekManagement = function (screen) {
+var WeekManagement = function(screen) {
 	var o = {
 		weekArray: [
 			Week(screen.giveOneWeekDisplayPosition()),
@@ -21,13 +21,13 @@ var WeekManagement = function (screen) {
 	//}
 
 	o.display = function() {
-		for (var i = 0; i < o.weekArray.length; i++) {
+		for (var i = 0; i < o.weekArray.length; ++i) {
 			o.weekArray[i].display()
 		}
 	}
 
 	o.ifInThenShow = function(mouse) {
-		for (int i = 0; i < o.weekArray.length; ++i) {
+		for (var i = 0; i < o.weekArray.length; ++i) {
 			if (o.weekArray[i].ifInThenShow(mouse)) {
 				return true
 			}
