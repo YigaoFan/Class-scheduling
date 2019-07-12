@@ -82,12 +82,27 @@ var Screen = function(mouse) {
         lines.splice(i, 1)
         // Continue search
         deleteRelatedLineFromX(x)
+        break // Why here don't have break, it also work normal
       }
     }
   }
 
   var drawBackground = function() {
 
+  }
+
+  var traverseRects = function(fun1, fun2 = null) {
+    for (var c = weekCount - 1; c >= 0; c--) {
+      var offset = c * Height
+      for (var i = rectList.length - 1; i >= 0; i--) {
+        var rectX = rectList[i].shape[0]
+        var rectY = rectList[i].shape[1] + offset
+        fun1(rectX, rectY)
+        if (fun2 != null) {
+          fun2(rectX, rectY)
+        }
+      }
+    }
   }
 
   o.tryAddLine = function(x, y) {
@@ -179,6 +194,26 @@ var Screen = function(mouse) {
 
   o.delWeek = function() {
     --weekCount
+    var helper = function() {
+      for (var i = 0; i < lines.length; i++) {
+        var shouldExist = false
+        var x = lines[i][0]
+        var y = lines[i][1]
+        traverseRects(function(rectX, rectY) {
+          if (pointInRect(x, y, rectX, rectY)) {
+            shouldExist = true
+          }
+        })
+
+        if (!shouldExist) {
+          lines.splice(i, 1)
+          helper()
+          break
+        }
+      }
+    }
+
+    helper()
   }
 
   o.clearClickRecord = function() {
