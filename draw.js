@@ -1,6 +1,7 @@
 // TODO: 应该将这个 rectangle 按照半小时的（可修改）粒度分成一块一块的，这样人家才好点
 // RGB background
 // use x as handle?
+// Bug: 删除 week 的时候 line Record 没有删掉
 
 var Screen = function(mouse) {
   var static = Screen
