@@ -1,16 +1,28 @@
 // TODO: 应该将这个 rectangle 按照半小时的（可修改）粒度分成一块一块的，这样人家才好点
+// RGB background
+// use x as handle?
+
 var Screen = function(mouse) {
-  var canvas = document.getElementById('id-canvas')
-  var context = canvas.getContext('2d')
+  var static = Screen
   // Start point
   var point = [10, 10]
   // Rect related
   var Width = 30
   var Height = 100
+  var weekCount = 1
+  // if (static.screenCount == undefined) {
+  //   static.screenCount = 1
+  // } else {
+  //   point[1] = point[1] + (static.screenCount * Height) + 10
+  //   static.screenCount++
+  // }
+
+  var canvas = document.getElementById('id-canvas')
+  var context = canvas.getContext('2d')
 
   var o = {}
   var handleRecord = 0
-  rectList = []
+  var rectList = []
   var lines = []
 
   var genHandle = function() {
@@ -73,17 +85,25 @@ var Screen = function(mouse) {
     }
   }
 
-  o.tryAddLine = function(x, y) {
-    for (var i = rectList.length - 1; i >= 0; i--) {
-      var rectX = rectList[i].shape[0]
-      var rectY = rectList[i].shape[1]
+  var drawBackground = function() {
 
-      if (pointInRect(x, y, rectX, rectY)) {
-        // log('pushed: ' + x + ' ' + y)
-        lines.push([
-          rectX,
-          y,
-        ])
+  }
+
+  o.tryAddLine = function(x, y) {
+    // Code below should be a mode
+    for (var c = weekCount - 1; c >= 0; c--) {
+      var offset = c * Height
+      for (var i = rectList.length - 1; i >= 0; i--) {
+        var rectX = rectList[i].shape[0]
+        var rectY = rectList[i].shape[1] + offset
+
+        if (pointInRect(x, y, rectX, rectY)) {
+          // log('pushed: ' + x + ' ' + y)
+          lines.push([
+            rectX,
+            y,
+          ])
+        }
       }
     }
 
@@ -99,12 +119,14 @@ var Screen = function(mouse) {
       y,
     ]
 
+    // Add two place
     // Update point
     point[0] += Width
     // log('point: ' + point)
     return registerInRectList(rect)
   }
 
+  // TODO: just use x of point to delete
   o.deleteRect = function(handle = -1) {
     log('delete called: ' + handle)
     if (handle == -1) {
@@ -122,23 +144,26 @@ var Screen = function(mouse) {
   }
 
   o.draw = function() {
-    var x = null
-    var y = null
-
     for (var i = 0; i < lines.length; i++) {
       drawLine(lines[i][0], lines[i][1])
     }
 
     // why should be Mouse can not be mouse
-    x = mouse[0]
-    y = mouse[1]
-    for (var i = rectList.length - 1; i >= 0; i--) {
-      var rectX = rectList[i].shape[0]
-      var rectY = rectList[i].shape[1]
-      drawRect(rectX, rectY)
+    var x = mouse[0]
+    var y = mouse[1]
 
-      if (pointInRect(x, y, rectX, rectY)) {
-        drawLine(rectX, y)
+    for (var c = weekCount - 1; c >= 0; c--) {
+      var offset = c * Height
+      for (var i = rectList.length - 1; i >= 0; i--) {
+        var rectX = rectList[i].shape[0]
+        var rectY = rectList[i].shape[1] + offset
+        drawRect(rectX, rectY)
+
+        if (pointInRect(x, y, rectX, rectY)) {
+          drawLine(rectX, y)
+        }
+
+        // TODO: Draw background
       }
     }
   }
@@ -147,5 +172,20 @@ var Screen = function(mouse) {
     context.clearRect(0, 0, canvas.width, canvas.height)
   }
 
+  o.addWeek = function() {
+    ++weekCount
+  }
+
+  o.delWeek = function() {
+    --weekCount
+  }
+
+  o.clearClickRecord = function() {
+    lines.length = 0
+  }
+
+  // Defalut perform action
+  o.addRect()
+  o.addWeek()
   return o
 }
