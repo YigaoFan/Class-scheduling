@@ -7,26 +7,26 @@ var __main = function() {
     // Value transform to time
     timeUnit = Number(input.value) + 1
   })
-  var screenPart1 = Screen(Mouse)
+  var screenPart = Screen(Mouse)
 
   document.querySelector('#id-add-week').addEventListener('click', function(event) {
-    screenPart1.addWeek()
+    screenPart.addWeek()
   })
 
   document.querySelector('#id-del-week').addEventListener('click', function(event) {
-    screenPart1.delWeek()
+    screenPart.delWeek()
   })
 
   document.querySelector('#id-add-day').addEventListener('click', function(event) {
-    screenPart1.addRect()
+    screenPart.addRect()
   })
 
   document.querySelector('#id-del-day').addEventListener('click', function(event) {
-    screenPart1.deleteRect()
+    screenPart.deleteRect()
   })
 
   document.querySelector('#id-clear-record').addEventListener('click', function(event) {
-    screenPart1.clearClickRecord()
+    screenPart.clearClickRecord()
   })
   window.addEventListener('mousemove', function(event) {
     // 6 为手动校准量
@@ -40,13 +40,13 @@ var __main = function() {
     // 6 为手动校准量
     var x = event.clientX - 6
     var y = event.clientY - 6
-    screenPart1.tryAddLine(x, y)
+    screenPart.tryAddLine(x, y)
 
   })
   setInterval(function() {
     // this will make line be grey not black
-    screenPart1.clear()
-    screenPart1.draw()
+    screenPart.clear()
+    screenPart.draw()
   }, 1000 / 30)
 }
 

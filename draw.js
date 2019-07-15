@@ -1,7 +1,7 @@
 // TODO: 应该将这个 rectangle 按照半小时的（可修改）粒度分成一块一块的，这样人家才好点
 // RGB background
 // use x as handle?
-// Bug: 删除 week 的时候 line Record 没有删掉
+
 
 var Screen = function(mouse) {
   var static = Screen
@@ -11,12 +11,6 @@ var Screen = function(mouse) {
   var Width = 30
   var Height = 100
   var weekCount = 1
-  // if (static.screenCount == undefined) {
-  //   static.screenCount = 1
-  // } else {
-  //   point[1] = point[1] + (static.screenCount * Height) + 10
-  //   static.screenCount++
-  // }
 
   var canvas = document.getElementById('id-canvas')
   var context = canvas.getContext('2d')
@@ -91,37 +85,30 @@ var Screen = function(mouse) {
 
   }
 
-  var traverseRects = function(fun1, fun2 = null) {
+  var traverseRects = function(fun) {
     for (var c = weekCount - 1; c >= 0; c--) {
       var offset = c * Height
       for (var i = rectList.length - 1; i >= 0; i--) {
         var rectX = rectList[i].shape[0]
         var rectY = rectList[i].shape[1] + offset
-        fun1(rectX, rectY)
-        if (fun2 != null) {
-          fun2(rectX, rectY)
-        }
+        fun(rectX, rectY)
       }
     }
   }
 
+  // TODO: use traverseRects to refactor
   o.tryAddLine = function(x, y) {
-    // Code below should be a mode
-    for (var c = weekCount - 1; c >= 0; c--) {
-      var offset = c * Height
-      for (var i = rectList.length - 1; i >= 0; i--) {
-        var rectX = rectList[i].shape[0]
-        var rectY = rectList[i].shape[1] + offset
-
-        if (pointInRect(x, y, rectX, rectY)) {
-          // log('pushed: ' + x + ' ' + y)
-          lines.push([
-            rectX,
-            y,
-          ])
-        }
+    var checkAdd = function(rectX, rectY) {
+      if (pointInRect(x, y, rectX, rectY)) {
+        // log('pushed: ' + x + ' ' + y)
+        lines.push([
+          rectX,
+          y,
+        ])
       }
     }
+
+    traverseRects(checkAdd)
 
     // Gen handle to delete function
   }
@@ -135,10 +122,8 @@ var Screen = function(mouse) {
       y,
     ]
 
-    // Add two place
     // Update point
     point[0] += Width
-    // log('point: ' + point)
     return registerInRectList(rect)
   }
 
@@ -164,24 +149,20 @@ var Screen = function(mouse) {
       drawLine(lines[i][0], lines[i][1])
     }
 
-    // why should be Mouse can not be mouse
     var x = mouse[0]
     var y = mouse[1]
 
-    for (var c = weekCount - 1; c >= 0; c--) {
-      var offset = c * Height
-      for (var i = rectList.length - 1; i >= 0; i--) {
-        var rectX = rectList[i].shape[0]
-        var rectY = rectList[i].shape[1] + offset
-        drawRect(rectX, rectY)
+    var helper = function(rectX, rectY) {
+      drawRect(rectX, rectY)
 
-        if (pointInRect(x, y, rectX, rectY)) {
-          drawLine(rectX, y)
-        }
-
-        // TODO: Draw background
+      if (pointInRect(x, y, rectX, rectY)) {
+        drawLine(rectX, y)
       }
+
+      // TODO: Draw background
     }
+
+    traverseRects(helper)
   }
 
   o.clear = function() {
