@@ -1,7 +1,8 @@
 // TODO: 应该将这个 rectangle 按照半小时的（可修改）粒度分成一块一块的，这样人家才好点
 // RGB background
-
-var Screen = function(mouse) {
+// TODO: two mode, click range bound mode and choose range mode
+// TODO: How draw color block in rect
+var Screen = function(mouse, timeUnit) {
   var static = Screen
   // Start point
   var point = [10, 10]
@@ -65,7 +66,6 @@ var Screen = function(mouse) {
     for (var c = weekCount - 1; c >= 0; c--) {
       var offset = c * Height
       for (var i = dayCount - 1; i >= 0; i--) {
-        // var rectX = rectList[i].shape[0]
         var rectX = point[0] + i * Width
         var rectY = point[0] + offset
         fun(rectX, rectY)

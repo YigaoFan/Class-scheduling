@@ -7,7 +7,7 @@ var __main = function() {
     // Value transform to time
     timeUnit = Number(input.value) + 1
   })
-  var screenPart = Screen(Mouse)
+  var screenPart = Screen(Mouse, timeUnit)
 
   document.querySelector('#id-add-week').addEventListener('click', function(event) {
     screenPart.addWeek()
@@ -49,9 +49,5 @@ var __main = function() {
     screenPart.draw()
   }, 1000 / 30)
 }
-
-
-
-
 
 __main()
