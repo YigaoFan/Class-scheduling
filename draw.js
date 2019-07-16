@@ -1,7 +1,5 @@
 // TODO: 应该将这个 rectangle 按照半小时的（可修改）粒度分成一块一块的，这样人家才好点
 // RGB background
-// use x as handle?
-
 
 var Screen = function(mouse) {
   var static = Screen
@@ -11,29 +9,18 @@ var Screen = function(mouse) {
   var Width = 30
   var Height = 100
   var weekCount = 1
+  var dayCount = 1
 
   var canvas = document.getElementById('id-canvas')
   var context = canvas.getContext('2d')
 
   var o = {}
   var handleRecord = 0
-  var rectList = []
   var lines = []
 
   var genHandle = function() {
     handleRecord = handleRecord + 1
     return handleRecord
-  }
-
-  var registerInRectList = function(shape) {
-    var o = {
-      shape: shape,
-      handle: genHandle(),
-    }
-
-    rectList.push(o)
-
-    return o.handle
   }
 
   var drawRect = function(x, y) {
@@ -46,17 +33,6 @@ var Screen = function(mouse) {
     context.lineTo(x + Width, y)
     context.closePath()
     context.stroke()
-  }
-
-  var indexOf = function(handle) {
-    for (var i = 0; i < rectList.length; i++) {
-      if (rectList[i].handle == handle) {
-        return i
-      }
-    }
-    throw {
-      Error: "Can 't not find corresponding shape of handle: " + handle
-    }
   }
 
   var pointInRect = function(pointX, pointY, rectX, rectY) {
@@ -88,15 +64,15 @@ var Screen = function(mouse) {
   var traverseRects = function(fun) {
     for (var c = weekCount - 1; c >= 0; c--) {
       var offset = c * Height
-      for (var i = rectList.length - 1; i >= 0; i--) {
-        var rectX = rectList[i].shape[0]
-        var rectY = rectList[i].shape[1] + offset
+      for (var i = dayCount - 1; i >= 0; i--) {
+        // var rectX = rectList[i].shape[0]
+        var rectX = point[0] + i * Width
+        var rectY = point[0] + offset
         fun(rectX, rectY)
       }
     }
   }
 
-  // TODO: use traverseRects to refactor
   o.tryAddLine = function(x, y) {
     var checkAdd = function(rectX, rectY) {
       if (pointInRect(x, y, rectX, rectY)) {
@@ -109,39 +85,16 @@ var Screen = function(mouse) {
     }
 
     traverseRects(checkAdd)
-
-    // Gen handle to delete function
   }
 
   o.addRect = function() {
-    var x = point[0]
-    var y = point[1]
-
-    var rect = [
-      x,
-      y,
-    ]
-
-    // Update point
-    point[0] += Width
-    return registerInRectList(rect)
+    ++dayCount
   }
 
-  // TODO: just use x of point to delete
   o.deleteRect = function(handle = -1) {
-    log('delete called: ' + handle)
-    if (handle == -1) {
-      var r = rectList.pop()
-      deleteRelatedLineFromX(r.shape[0])
-
-      // Update point
-      point[0] -= Width
-    } else {
-      var i = indexOf(handle)
-      var discardedOnes = rectList.splice(i, 1)
-      var discardedOne = discardedOnes[0]
-      deleteRelatedLineFromX(discardedOne.shape[0])
-    }
+    // log('delete called: ' + handle)
+    deleteRelatedLineFromX(point[0] + Width * (dayCount - 1))
+    dayCount = dayCount - 1
   }
 
   o.draw = function() {
@@ -202,7 +155,6 @@ var Screen = function(mouse) {
   }
 
   // Defalut perform action
-  o.addRect()
   o.addWeek()
   return o
 }
