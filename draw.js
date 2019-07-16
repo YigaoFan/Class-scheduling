@@ -64,8 +64,9 @@ var Screen = function(mouse, timeUnit) {
 
   var traverseRects = function(fun) {
     for (var c = weekCount - 1; c >= 0; c--) {
-      var offset = c * Height
+      var offset = c * (Height + 10)
       for (var i = dayCount - 1; i >= 0; i--) {
+        // log(offset)
         var rectX = point[0] + i * Width
         var rectY = point[0] + offset
         fun(rectX, rectY)
