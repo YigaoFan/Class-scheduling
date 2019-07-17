@@ -81,6 +81,23 @@ var Screen = function(mouse, timeUnit) {
     }
   }
 
+
+  var traverseTimeUnitBlock = function(fun) {
+    var genUnit = function(rectX, rectY) {
+      // TODO 可以设置每天的可用时间
+      var unitCount = 24 / timeUnit
+      var unitHeight = Height / unitCount
+
+      for (var i = unitCount; i >= 0; i--) {
+	var unitX = rectX
+	var unitY = rectY + i * unitHeight
+
+	fun(unitX, unitY, unitHeigh)
+      }
+      
+    }
+  } 
+
   o.tryAddLine = function(x, y) {
     var checkAdd = function(rectX, rectY) {
       if (pointInRect(x, y, rectX, rectY)) {
