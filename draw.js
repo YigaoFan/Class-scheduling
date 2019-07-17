@@ -2,6 +2,9 @@
 // RGB background
 // TODO: two mode, click range bound mode and choose range mode
 // TODO: How draw color block in rect
+// TODO: dynamic change canvas width and height
+// TODO: 加一个生成当前时间并加一定时间的功能
+// TODO: 随机生成鼠标划过的颜色，点击之后确认
 var Screen = function(mouse, timeUnit) {
   var static = Screen
   // Start point
@@ -26,6 +29,10 @@ var Screen = function(mouse, timeUnit) {
 
   var drawRect = function(x, y) {
     context.strokeRect(x, y, Width, Height)
+  }
+
+  var drawBlock = function(x, y) {
+    context.fillRect(x, y, Width, 6)
   }
 
   var drawLine = function(x, y) {
@@ -100,7 +107,8 @@ var Screen = function(mouse, timeUnit) {
 
   o.draw = function() {
     for (var i = 0; i < lines.length; i++) {
-      drawLine(lines[i][0], lines[i][1])
+      drawBlock(lines[i][0], lines[i][1] - 3)
+      // TODO: should click color block, not draw block
     }
 
     var x = mouse[0]
@@ -110,7 +118,8 @@ var Screen = function(mouse, timeUnit) {
       drawRect(rectX, rectY)
 
       if (pointInRect(x, y, rectX, rectY)) {
-        drawLine(rectX, y)
+        // drawLine(rectX, y)
+        drawBlock(rectX, y - 3)
       }
 
       // TODO: Draw background
