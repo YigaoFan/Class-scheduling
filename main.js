@@ -1,11 +1,11 @@
 var __main = function() {
   var Mouse = []
-  var timeUnit = 0.5
+  var timeUnit = [4, ]
   document.querySelector('#id-input-speed').addEventListener('input', function() {
     var input = event.target
     // 0.5 1 1.5 2 3 4 min max
     // Value transform to time
-    timeUnit = Number(input.value) + 1
+    timeUnit[0] = Number(input.value) + 1
   })
   var screenPart = Screen(Mouse, timeUnit)
 
@@ -30,18 +30,21 @@ var __main = function() {
   })
   window.addEventListener('mousemove', function(event) {
     // 6 为手动校准量
-    var x = event.clientX - 6
-    var y = event.clientY - 6
+    var x = event.pageX - 6
+    var y = event.pageY - 6
     Mouse[0] = x
     Mouse[1] = y
   })
 
   window.addEventListener('mousedown', function(event) {
     // 6 为手动校准量
-    var x = event.clientX - 6
-    var y = event.clientY - 6
+    var x = event.pageX - 6
+    var y = event.pageY - 6
     screenPart.tryAddLine(x, y)
-
+    // log('clientX: ' + x)
+    // log('clientY: ' + y)
+    // log('pageX: ' + event.pageX)
+    // log('pageY: ' + event.pageY)
   })
   setInterval(function() {
     // this will make line be grey not black

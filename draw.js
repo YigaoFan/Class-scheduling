@@ -11,15 +11,21 @@ var Screen = function(mouse, timeUnit) {
   var point = [10, 10]
   // Rect related
   var Width = 30
-  var Height = 100
+  var Height = 150
   var weekCount = 1
   var dayCount = 1
+  var unitHeight = function() {
+    return Height / unitCount()
+  }
 
+  var unitCount = function() {
+    return 24 / timeUnit[0]
+  }
   var canvas = document.getElementById('id-canvas')
   var context = canvas.getContext('2d')
 
   var o = {}
-  var handleRecord = 0
+  // var handleRecord = 0
   var lines = []
 
   var genHandle = function() {
@@ -32,7 +38,7 @@ var Screen = function(mouse, timeUnit) {
   }
 
   var drawBlock = function(x, y) {
-    context.fillRect(x, y, Width, 6)
+    context.fillRect(x, y, Width, unitHeight())
   }
 
   var drawLine = function(x, y) {
@@ -46,6 +52,16 @@ var Screen = function(mouse, timeUnit) {
   var pointInRect = function(pointX, pointY, rectX, rectY) {
     if (pointX >= rectX && pointX <= (rectX + Width)) {
       if (pointY >= rectY && pointY <= (rectY + Height)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  var pointInTimeUnit = function(pointX, pointY, unitX, unitY) {
+    if (pointX >= unitX && pointX <= (unitX + Width)) {
+      if (pointY >= unitY && pointY <= (unitY + unitHeight())) {
         return true
       }
     }
@@ -85,31 +101,31 @@ var Screen = function(mouse, timeUnit) {
   var traverseTimeUnitBlock = function(fun) {
     var genUnit = function(rectX, rectY) {
       // TODO 可以设置每天的可用时间
-      var unitCount = 24 / timeUnit
-      var unitHeight = Height / unitCount
+      var count = unitCount()
+      var height = unitHeight()
 
-      for (var i = unitCount; i >= 0; i--) {
-	var unitX = rectX
-	var unitY = rectY + i * unitHeight
-
-	fun(unitX, unitY, unitHeigh)
+      for (var i = count; i >= 0; i--) {
+        var unitX = rectX
+        var unitY = rectY + i * height
+        fun(unitX, unitY)
       }
-      
     }
-  } 
+
+    traverseRects(genUnit)
+  }
 
   o.tryAddLine = function(x, y) {
-    var checkAdd = function(rectX, rectY) {
-      if (pointInRect(x, y, rectX, rectY)) {
+    var checkAdd = function(unitX, unitY) {
+      if (pointInTimeUnit(x, y, unitX, unitY)) {
         // log('pushed: ' + x + ' ' + y)
         lines.push([
-          rectX,
-          y,
+          unitX,
+          unitY,
         ])
       }
     }
 
-    traverseRects(checkAdd)
+    traverseTimeUnitBlock(checkAdd)
   }
 
   o.addRect = function() {
@@ -124,25 +140,40 @@ var Screen = function(mouse, timeUnit) {
 
   o.draw = function() {
     for (var i = 0; i < lines.length; i++) {
-      drawBlock(lines[i][0], lines[i][1] - 3)
+      // TODO 为什么移动和点击的位置不一致
+      drawBlock(lines[i][0], lines[i][1])
       // TODO: should click color block, not draw block
     }
 
     var x = mouse[0]
     var y = mouse[1]
 
-    var helper = function(rectX, rectY) {
+    var dayHelper = function(rectX, rectY) {
       drawRect(rectX, rectY)
 
-      if (pointInRect(x, y, rectX, rectY)) {
-        // drawLine(rectX, y)
-        drawBlock(rectX, y - 3)
+      var genUnit = function(fun) {
+        // TODO 可以设置每天的可用时间
+        var count = unitCount()
+        var height = unitHeight()
+
+        for (var i = count; i >= 0; i--) {
+          var unitX = rectX
+          var unitY = rectY + i * height
+          fun(unitX, unitY)
+        }
       }
 
+      var timeUnitHelper = function(unitX, unitY) {
+        if (pointInTimeUnit(x, y, unitX, unitY)) {
+          drawBlock(unitX, unitY)
+        }
+      }
+
+      genUnit(timeUnitHelper)
       // TODO: Draw background
     }
 
-    traverseRects(helper)
+    traverseRects(dayHelper)
   }
 
   o.clear = function() {
