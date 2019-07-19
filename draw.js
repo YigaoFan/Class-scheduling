@@ -28,16 +28,30 @@ var Screen = function(mouse, timeUnit) {
   // var handleRecord = 0
   var lines = []
 
-  var genHandle = function() {
-    handleRecord = handleRecord + 1
-    return handleRecord
+  var genColor = function() {
+    var genColorBit = function() {
+      return parseInt(Math.random() * 255)
+    }
+    return 'rgb(' + genColorBit() + ',' + genColorBit() + ',' + genColorBit() + ')'
   }
+
+  var currentColor = genColor()
+
+  var changeColor = function() {
+    currentColor = genColor()
+  }
+
+  // var genHandle = function() {
+  //   handleRecord = handleRecord + 1
+  //   return handleRecord
+  // }
 
   var drawRect = function(x, y) {
     context.strokeRect(x, y, Width, Height)
   }
 
-  var drawBlock = function(x, y) {
+  var drawBlock = function(x, y, color) {
+    context.fillStyle = color
     context.fillRect(x, y, Width, unitHeight())
   }
 
@@ -121,7 +135,10 @@ var Screen = function(mouse, timeUnit) {
         lines.push([
           unitX,
           unitY,
+          currentColor,
         ])
+
+        changeColor()
       }
     }
 
@@ -141,7 +158,7 @@ var Screen = function(mouse, timeUnit) {
   o.draw = function() {
     for (var i = 0; i < lines.length; i++) {
       // TODO 为什么移动和点击的位置不一致
-      drawBlock(lines[i][0], lines[i][1])
+      drawBlock(lines[i][0], lines[i][1], lines[i][2])
       // TODO: should click color block, not draw block
     }
 
@@ -165,7 +182,7 @@ var Screen = function(mouse, timeUnit) {
 
       var timeUnitHelper = function(unitX, unitY) {
         if (pointInTimeUnit(x, y, unitX, unitY)) {
-          drawBlock(unitX, unitY)
+          drawBlock(unitX, unitY, currentColor)
         }
       }
 
