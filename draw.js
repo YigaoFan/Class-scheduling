@@ -1,10 +1,9 @@
 // TODO: 应该将这个 rectangle 按照半小时的（可修改）粒度分成一块一块的，这样人家才好点
-// RGB background
 // TODO: two mode, click range bound mode and choose range mode
-// TODO: How draw color block in rect
 // TODO: dynamic change canvas width and height
-// TODO: 加一个生成当前时间并加一定时间的功能
-// TODO: 随机生成鼠标划过的颜色，点击之后确认
+// TODO:
+// TODO: week compare
+// TODO: configure excel file parse format
 var Screen = function(mouse, timeUnit) {
   var static = Screen
   // Start point
