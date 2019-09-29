@@ -20,6 +20,7 @@ var Screen = function(mouse, timeUnit) {
   var unitHeight = function() {
     return Height / unitCount()
   }
+  var haveCompared = false
 
   var o = {}
   var clickedUnits = []
@@ -201,6 +202,13 @@ var Screen = function(mouse, timeUnit) {
   }
 
   o.showSameTimeOfExistedWeek = function() {
+    log('have comapared: ' + haveCompared)
+    if (haveCompared) {
+      // 删掉上次比较的结果
+      o.delWeek()
+    }
+    haveCompared = true
+
     var getUnitsWithoutOffsetFromWeek = function(weekIndex) {
       // remember to remove Y offset
       var removeOffsetY = function(unit, weekIndex) {
