@@ -105,7 +105,7 @@ var Screen = function(mouse, timeUnit) {
     var count = unitCount()
     var height = unitHeight()
     var traverseUnit = function(rectX, rectY, weekIndex) {
-      for (var i = count; i >= 0; i--) {
+      for (var i = 0; i < count; ++i) {
         var unitX = rectX
         var unitY = rectY + i * height
         callBack(unitX, unitY, weekIndex)
@@ -250,6 +250,7 @@ var Screen = function(mouse, timeUnit) {
             sameUnits.push(u)
           }
         }
+
         return sameUnits
       }
 
@@ -276,6 +277,7 @@ var Screen = function(mouse, timeUnit) {
         changeColor()
       }
     }
+
     addIntoClickedUnits(sameTimeUnitsInWeekLevel)
   }
 
