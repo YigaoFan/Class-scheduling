@@ -29,38 +29,7 @@ var __main = function() {
     screenPart.tryAddUnit(x, y)
   })
 
-  var processWorkBook = function(wb) {
-    var ws = wb.Sheets[wb.SheetNames[0]]
-    var html_string = XLSX.utils.sheet_to_html(ws, {
-      id: "data-table",
-      editable: true
-    })
-    // document.getElementById("container").innerHTML = html_string
-    log('load file OK')
-  }
-
   var uploadFileButton = document.getElementById("file")
-  var attachFileHandler = function(event) {
-    var files = event.target.files
-    var f = files[0]
-    var reader = new FileReader()
-    var rABS = !!reader.readAsBinaryString
-    reader.onload = function(e) {
-      var data = event.target.result
-      if (!rABS) {
-        data = new Uint8Array(data)
-      }
-      var wb = XLSX.read(data, {
-        type: rABS ? 'binary' : 'array'
-      })
-      processWorkBook(wb)
-    }
-    if (rABS) {
-      reader.readAsBinaryString(f)
-    } else {
-      reader.readAsArrayBuffer(f)
-    }
-  }
   uploadFileButton.addEventListener('change', attachFileHandler, false)
 
   // Refresh
