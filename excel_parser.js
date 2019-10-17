@@ -1,6 +1,6 @@
 var processWorkBook = function(wb) {
   workbook = wb
-  ws = wb.Sheets[wb.SheetNames[0]]
+  var ws = wb.Sheets[wb.SheetNames[0]]
   var html_string = XLSX.utils.sheet_to_html(ws, {
     id: "data-table",
     editable: true
@@ -8,9 +8,7 @@ var processWorkBook = function(wb) {
   log('load file OK')
   // temp code below
   var summarySheetName = wb.SheetNames[0]
-  var sheet = wb.Sheets[summarySheetName]
-  // TODO h 这个是什么意思呢
-  log(sheet['A1'].h)
+  sheet = wb.Sheets[summarySheetName]
 }
 
 var attachFileHandler = function(event) {
@@ -32,5 +30,91 @@ var attachFileHandler = function(event) {
     reader.readAsBinaryString(f)
   } else {
     reader.readAsArrayBuffer(f)
+  }
+}
+
+var getCell = function(column, line, sheet) {
+  var dic = [
+    'A',
+    'B',
+    // how to gen this
+  ]
+  return sheet[dic[column] + line.toString()]
+}
+var emptyCell = function(cell) {
+  if (cell && cell.v && cell.v.replace(/\s/g, '').length) {
+    return true
+  }
+
+  return false
+}
+
+var containValidTime = function(cell) {
+  // TODO
+}
+
+var detectTimeTable = function(sheet) {
+  var colLimit = 50
+  var linLimit = 50
+
+  var searchRightBound = function(i, line) {
+    ++i
+    for (; i < colLimit; ++i) {
+      var c = getCell(i, line, sheet)
+      if (emptyCell(c)) {
+        return i
+      }
+    }
+
+    throw "Right bound not found, please check sheet"
+  }
+  var searchDownBound = function(column, j) {
+    ++j
+    for (; j < linLimit; ++j) {
+      var c = getCell(column, j, sheet)
+      if (emptyCell(c)) {
+        return j
+      }
+    }
+
+    throw "Down bound not found, please check sheet"
+  }
+  for (var i = 0; i < colLimit; ++i) {
+    for (var j = 0; j < linLimit; ++j) {
+      var c = getCell(i, j, sheet)
+      if (!emptyCell(c) && containValidTime(c)) {
+        // 表示找到了列表的左上角
+        var r = searchRightBound(i, j)
+        var d = searchDownBound(i, j)
+        return {
+          // [column, line]
+          startPoint: [i, j],
+          rightBound: r,
+          downBound: d,
+        }
+      }
+    }
+  }
+  throw "Invalid sheet, please check sheet"
+}
+
+var parseTimeCell = function(cell) {
+  // 解析一个单元格中的数据（有一定的宽容度）
+}
+// 期望列表的输入是方的
+var parseSheet = function(sheet) {
+  // 输出一个时间列表，外面可以利用这个时间表去生成一个周
+  var table = detectTimeTable(sheet)
+  var startPoint = table.startPoint
+  var r = table.rightBound
+  var d = table
+  var i = table.startPoint[0] // column
+  var j = table.startPoint[1] // line
+  for (; i < table.rightBound; ++i) {
+    for (; j < table.downBound; ++j) {
+      var c = getCell(i, j, sheet)
+      var t = parseTimeCell(c)
+      // how to show
+    }
   }
 }
