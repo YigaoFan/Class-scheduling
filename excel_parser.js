@@ -37,16 +37,13 @@ var getCell = function(column, line, sheet) {
   var dic = [
     'A',
     'B',
-    // how to gen this
+    // how to generate this
   ]
   return sheet[dic[column] + line.toString()]
 }
 var emptyCell = function(cell) {
-  if (cell && cell.v && cell.v.replace(/\s/g, '').length) {
-    return true
-  }
-
-  return false
+  // TODO 测试下看这个对不对
+  return cell && cell.v && cell.v.replace(/\s/g, '').length
 }
 
 var containValidTime = function(cell) {
@@ -102,19 +99,20 @@ var parseTimeCell = function(cell) {
   // 解析一个单元格中的数据（有一定的宽容度）
 }
 // 期望列表的输入是方的
+// 输出一个时间列表，外面可以利用这个时间表去生成一个周
 var parseSheet = function(sheet) {
-  // 输出一个时间列表，外面可以利用这个时间表去生成一个周
+  var times = []
   var table = detectTimeTable(sheet)
   var startPoint = table.startPoint
-  var r = table.rightBound
-  var d = table
   var i = table.startPoint[0] // column
   var j = table.startPoint[1] // line
   for (; i < table.rightBound; ++i) {
     for (; j < table.downBound; ++j) {
       var c = getCell(i, j, sheet)
       var t = parseTimeCell(c)
-      // how to show
+      times.push(t)
     }
   }
+
+  return times
 }
