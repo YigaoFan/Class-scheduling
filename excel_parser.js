@@ -1,3 +1,6 @@
+/*
+可以加一个将解析出来的时间信息以网格的形式显示出来，供用户去微调时间？
+*/
 var processWorkBook = function(wb) {
   workbook = wb
   var html_string = XLSX.utils.sheet_to_html(ws, {
@@ -111,6 +114,7 @@ var isDiv = function(c) {
 }
 var parseTime = function(str) {
   // 注意下面：有几个状态是不相容的
+  var onTimeParse = false
   var expectHour = true
   var expectMin = false
   var expectDivide = false // like : or other divide char
@@ -123,40 +127,40 @@ var parseTime = function(str) {
     log('now: ', c)
     log('hour: ', hour)
     log('min: ', min)
-    log('expectHour: ', expectHour)
-    log('expectMin: ', expectMin)
+    log('expectHourBegin: ', expectHourBegin)
+    log('expectMinBegin: ', expectMinBegin)
     log('expectDivide: ', expectDivide)
     log('expectSpace: ', expectSpace)
     // 主动将 expectSpace 设为 true 的情况只有一种：即两个时间的分隔
     // expect 用于表达语法的主动倾向，而非下一个地方的可能性
     // 可能性利用 && 右边的式子进行处理
     // 还没有思考完全
-    if ((expectSpace || expectDivide) && isSpace(c)) {
-      // do nothing
-      // } else if (expectSpace && isNum(c)) {
-      //   hour += c
-      //   expectHour = true
-    } else if (expectDivide && isDiv(c)) {
-      expectDivide = false
-      expectSpace = true
-      expectMin = true
+    if (expectSpace && isSpace(c)) {
+      // nothing to do
+    } else if (expectSpace && isNum(c)) {
+      expectHour = true
+      expectSpace = false
     } else if (expectHour && isNum(c)) {
       hour += c
     } else if (expectHour && isSpace(c)) {
       expectHour = false
-      expectSpace = true
       expectDivide = true
-      // hour should not cha
     } else if (expectHour && isDiv(c)) {
       expectHour = false
-      expectSpace = true
       expectMin = true
+    } else if (expectDivide && isDiv(c)) {
+      expectDivide = false
+      expectMin = true
+    } else if (expectDivide && isSpace(c)) {
+      // nothing to do
     } else if (expectMin && isNum(c)) {
       min += c
     } else if (expectMin && isSpace(c)) {
-      expectMin = false
-      expectSpace = true
-      expectHour = true
+      // nothing to do
+      // 这里怎么知道是 ：后面还是数字后面呢
+      // 这里有问题
+    } else if () {
+
     } else {
       throw "Error content" + c
     }
