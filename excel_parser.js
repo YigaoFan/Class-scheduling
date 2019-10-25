@@ -127,17 +127,16 @@ var parseTime = function(str) {
     log('now: ', c)
     log('hour: ', hour)
     log('min: ', min)
-    log('expectHourBegin: ', expectHourBegin)
-    log('expectMinBegin: ', expectMinBegin)
-    log('expectDivide: ', expectDivide)
-    log('expectSpace: ', expectSpace)
+    // log('expectHour: ', expectHour)
+    // log('expectMin: ', expectMin)
+    // log('expectDivide: ', expectDivide)
+    // log('expectSpace: ', expectSpace)
     // 主动将 expectSpace 设为 true 的情况只有一种：即两个时间的分隔
-    // expect 用于表达语法的主动倾向，而非下一个地方的可能性
     // 可能性利用 && 右边的式子进行处理
-    // 还没有思考完全
     if (expectSpace && isSpace(c)) {
       // nothing to do
     } else if (expectSpace && isNum(c)) {
+      hour += c
       expectHour = true
       expectSpace = false
     } else if (expectHour && isNum(c)) {
@@ -155,12 +154,13 @@ var parseTime = function(str) {
       // nothing to do
     } else if (expectMin && isNum(c)) {
       min += c
-    } else if (expectMin && isSpace(c)) {
+    } else if (expectMin && isSpace(c) && min.length == 0) {
       // nothing to do
-      // 这里怎么知道是 ：后面还是数字后面呢
-      // 这里有问题
-    } else if () {
-
+    } else if (expectMin && isSpace(c) && min.length != 0) {
+      expectMin = false
+      expectSpace = true
+      // 表示一个时间已经解析结束
+      break
     } else {
       throw "Error content" + c
     }
