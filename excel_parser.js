@@ -3,10 +3,6 @@
 */
 var processWorkBook = function(wb) {
   workbook = wb
-  var html_string = XLSX.utils.sheet_to_html(ws, {
-    id: "data-table",
-    editable: true
-  })
   log('load file OK')
   // default parse first sheet
   var first = wb.SheetNames[0]
@@ -46,62 +42,36 @@ var getCell = function(column, line, sheet) {
 var emptyCell = function(cell) {
   return !(cell && cell.v && cell.w.replace(/\s/g, '').length)
 }
-var containValidTime = function(cell) {
-  // TODO
-  return true
+var containValidTime = function(str) {
+  for (var i = 0; i < str.length; ++i) {
+    var c = str[i]
+    if (isNum(c)) { // 这里的判断条件比较简单
+      return true
+    }
+  }
+
+  return false
 }
-var detectTimeTable = function(sheet) {
-  var colLimit = 50
-  var linLimit = 50
-
-  var searchRightBound = function(i, line) {
-    ++i
-    for (; i < colLimit; ++i) {
-      var c = getCell(i, line, sheet)
-      if (emptyCell(c)) {
-        return i
-      }
+// [alpha, num]
+var divideAlphaNum = function(str) {
+  for (var i = 0; i < str.length; ++i) {
+    var c = str[i]
+    if (isNum(c)) {
+      return [
+        str.substring(0, i),
+        str.substring(i),
+      ]
     }
-
-    throw "Right bound not found, please check sheet"
   }
-  var searchDownBound = function(column, j) {
-    ++j
-    for (; j < linLimit; ++j) {
-      var c = getCell(column, j, sheet)
-      if (emptyCell(c)) {
-        return j
-      }
-    }
-
-    throw "Down bound not found, please check sheet"
-  }
+}
+var detectUpLeftTimeUnitPos = function(sheet) {
   for (var k in sheet) {
-    // TODO 采用遍历的模式而不是现在这种类似穷举的方法
-    // 过滤掉无用的 k -- !ref !margins
-    if (!k.includes('!')) {
-      log(sheet[k].w)
-    }
-  }
-  return;
-  for (var i = 0; i < colLimit; ++i) {
-    for (var j = 1; j < linLimit; ++j) {
-      var c = getCell(i, j, sheet)
-      if (!emptyCell(c) && containValidTime(c)) {
-        // 表示找到了列表的左上角
-        var r = searchRightBound(i, j)
-        var d = searchDownBound(i, j)
-        return {
-          // [column, line]
-          startPoint: [i, j],
-          rightBound: r,
-          downBound: d,
-        }
+    if (!k.includes('!')) { // 过滤掉无用的 k -- !ref !margins
+      if (containValidTime(sheet[k].w)) {
+        return divideAlphaNum(k)
       }
     }
   }
-
-  throw "Invalid sheet, please check sheet"
 }
 var isSpace = function(c) {
   return c && !c.trim()
@@ -113,7 +83,7 @@ var isDiv = function(c) {
   return c == ':'
 }
 var parseTime = function(str) {
-  // 注意下面：有几个状态是不相容的
+  var times = []
   var onTimeParse = false
   var expectHour = true
   var expectMin = false
@@ -123,16 +93,6 @@ var parseTime = function(str) {
   var min = ''
   for (var i = 0; i < str.length; ++i) {
     var c = str[i]
-
-    log('now: ', c)
-    log('hour: ', hour)
-    log('min: ', min)
-    // log('expectHour: ', expectHour)
-    // log('expectMin: ', expectMin)
-    // log('expectDivide: ', expectDivide)
-    // log('expectSpace: ', expectSpace)
-    // 主动将 expectSpace 设为 true 的情况只有一种：即两个时间的分隔
-    // 可能性利用 && 右边的式子进行处理
     if (expectSpace && isSpace(c)) {
       // nothing to do
     } else if (expectSpace && isNum(c)) {
@@ -160,30 +120,33 @@ var parseTime = function(str) {
       expectMin = false
       expectSpace = true
       // 表示一个时间已经解析结束
-      break
+      times.push([parseInt(hour), parseInt(min)])
+      hour = ''
+      min = ''
     } else {
       throw "Error content" + c
     }
   }
+  if (hour != '' && min != '') {
+    times.push([parseInt(hour), parseInt(min)])
+  }
   // convert hour and min to int and check valid or not
-  log('hour: "' + hour + '" min: "' + min + '"')
+  return times
 }
 // 期望列表的输入是方的
 // 输出一个时间列表，外面可以利用这个时间表去生成一个周
 var parseSheet = function(sheet) {
   var times = []
-  var table = detectTimeTable(sheet)
+  var table = detectUpLeftTimeUnitPos(sheet)
   log(table)
-  // var startPoint = table.startPoint
-  // var i = table.startPoint[0] // column
-  // var j = table.startPoint[1] // line
-  // for (; i < table.rightBound; ++i) {
-  //   for (; j < table.downBound; ++j) {
-  //     var c = getCell(i, j, sheet)
-  //     var t = parseTimeCell(c)
-  //     times.push(t)
-  //   }
-  // }
-  //
-  // return times
+  for (var k in sheet) {
+    if (!k.includes('!')) { // 过滤掉无用的 k -- !ref !margins
+      var v = sheet[k].w
+      if (containValidTime(v)) {
+        times.push(parseTime(v))
+      }
+    }
+  }
+  // 去除空的时间和无效的时间
+  log(times)
 }
