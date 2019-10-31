@@ -1,7 +1,6 @@
 // TODO: 应该将这个 rectangle 按照半小时的（可修改）粒度分成一块一块的，这样人家才好点
 // TODO: two mode, click range bound mode and choose range mode
 // TODO: dynamic change canvas width and height
-// TODO:
 // TODO: week compare
 // TODO: can configure excel file parse format
 var Screen = function(mouse, timeUnit) {

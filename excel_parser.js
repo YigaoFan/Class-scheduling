@@ -1,5 +1,6 @@
 /*
 可以加一个将解析出来的时间信息以网格的形式显示出来，供用户去微调时间？
+时间与时间之间有横线或其他： 10:00 - 12:00，这个需要处理一下
 */
 var processWorkBook = function(wb) {
   workbook = wb
@@ -119,7 +120,7 @@ var parseTime = function(str) {
     } else if (expectMin && isSpace(c) && min.length != 0) {
       expectMin = false
       expectSpace = true
-      // 表示一个时间已经解析结束
+      // 一个时间已经解析结束
       times.push([parseInt(hour), parseInt(min)])
       hour = ''
       min = ''
