@@ -131,7 +131,7 @@ var parseTime = function(str) {
   if (hour != '' && min != '') {
     times.push([parseInt(hour), parseInt(min)])
   }
-  // convert hour and min to int and check valid or not
+  // convert hour and min to int(进制转换) and check valid or not
   return times
 }
 // 期望列表的输入是方的
@@ -144,6 +144,7 @@ var parseSheet = function(sheet) {
     if (!k.includes('!')) { // 过滤掉无用的 k -- !ref !margins
       var v = sheet[k].w
       if (containValidTime(v)) {
+        // 依据相对位置，算出是第几天
         times.push(parseTime(v))
       }
     }

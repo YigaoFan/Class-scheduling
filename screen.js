@@ -1,8 +1,9 @@
 // TODO: 应该将这个 rectangle 按照半小时的（可修改）粒度分成一块一块的，这样人家才好点
 // TODO: two mode, click range bound mode and choose range mode
 // TODO: dynamic change canvas width and height
-// TODO: week compare
 // TODO: can configure excel file parse format
+
+// 这部分主要负责显示
 var Screen = function(mouse, timeUnit) {
   var canvas = document.getElementById('id-canvas')
   var context = canvas.getContext('2d')
@@ -65,8 +66,8 @@ var Screen = function(mouse, timeUnit) {
   }
 
   var pointInTimeUnit = function(pointX, pointY, unitX, unitY) {
-    if (pointX >= unitX && pointX <= (unitX + Width)) {
-      if (pointY >= unitY && pointY <= (unitY + unitHeight())) {
+    if (pointX >= unitX && pointX < (unitX + Width)) {
+      if (pointY >= unitY && pointY < (unitY + unitHeight())) {
         return true
       }
     }
