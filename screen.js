@@ -25,15 +25,7 @@ var Screen = function(mouse, timeUnit) {
   var o = {}
   var clickedUnits = []
 
-  var genColor = function() {
-    var genColorBit = function() {
-      return parseInt(Math.random() * 255)
-    }
-    return 'rgb(' + genColorBit() + ',' + genColorBit() + ',' + genColorBit() + ')'
-  }
-
   var currentColor = genColor()
-
   var changeColor = function() {
     currentColor = genColor()
   }
@@ -47,13 +39,13 @@ var Screen = function(mouse, timeUnit) {
     context.fillRect(x, y, Width, unitHeight())
   }
 
-  var drawLine = function(x, y) {
-    context.beginPath()
-    context.moveTo(x, y)
-    context.lineTo(x + Width, y)
-    context.closePath()
-    context.stroke()
-  }
+  // var drawLine = function(x, y) {
+  //   context.beginPath()
+  //   context.moveTo(x, y)
+  //   context.lineTo(x + Width, y)
+  //   context.closePath()
+  //   context.stroke()
+  // }
 
   var pointInRect = function(pointX, pointY, rectX, rectY) {
     if (pointX >= rectX && pointX <= (rectX + Width)) {
@@ -84,10 +76,6 @@ var Screen = function(mouse, timeUnit) {
         break // Why here don't have break, it also work normal
       }
     }
-  }
-
-  var drawBackground = function() {
-
   }
 
   var traverseRects = function(callBack, weekCount = _weekCount) {

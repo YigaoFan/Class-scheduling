@@ -5,3 +5,10 @@ var registerElementEventHandler = function(elementId, callBack, eventName = 'cli
     callBack()
   })
 }
+
+var genColor = function() {
+  var genColorBit = function() {
+    return parseInt(Math.random() * 255)
+  }
+  return 'rgb(' + genColorBit() + ',' + genColorBit() + ',' + genColorBit() + ')'
+}
