@@ -20,11 +20,9 @@
 // 2.指定单位时间的
 // 3.指定一天时间总长度的
 var TimeScale = function(baseX, baseY) {
-  var mode = false // false 代表使用 block 点击，true 代表使用精准时间
+  var blockMode = false // false 代表使用 block 点击，true 代表使用精准时间
   // 把 Screen 的部分代码移过来
-  // 设置一个开关设置两种时间模式
   var o = {}
-  var height = 100 // TODO change it
 
   // 指定一天时间范围
   var dayBegin = [8, 0] // 8: 00
@@ -32,31 +30,40 @@ var TimeScale = function(baseX, baseY) {
 
   // 按 block 来划分
   var unitCount = 10 // TODO
-  // begin: [10, 0], end: [2, 23]
-  o.convertTimeToXY = function(begin, end) {
-
-  }
-
-  o.convertBlockToXY = function(i) {
-
-  }
 
   o.changeDayRange = function(newBegin, newEnd) {
     dayBegin = newBegin
     dayEnd = newEnd
   }
 
-  o.changeUnitCount = function(n) {
-    unitCount = n
+  o.setUnitCount = function(n) {
+    if (blockMode) {
+      unitCount = n
+    }
   }
 
-  o.swichMode = function() {
-    mode = !mode
+  o.switchToBlockMode = function() {
+    blockMode = true
+  }
+
+  o.switchToDetailTime= function () {
+    blockMode = false
   }
 
   o.unitLen = function() {
     // 表示单位时间，方便画图部分画单位
+    // 几个百分比
+  }
+
+  o.addATime = function(day, percentPosition, percentLen) {
+    // convert to the current mode time
+    if (blockMode) {
+
+    } else {
+
+    }
   }
 
   return o
 }
+// [dayNum, percentNum, percentLen]

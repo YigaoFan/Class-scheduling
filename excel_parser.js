@@ -1,9 +1,8 @@
 /*
 可以加一个将解析出来的时间信息以网格的形式显示出来，供用户去微调时间？
-时间与时间之间有横线或其他： 10:00 - 12:00，这个需要处理一下
 */
 var processWorkBook = function(wb) {
-  workbook = wb
+  // workbook = wb
   log('load file OK')
   // default parse first sheet
   var first = wb.SheetNames[0]
@@ -23,7 +22,7 @@ var attachFileHandler = function(event) {
       data = new Uint8Array(data)
     }
     var wb = XLSX.read(data, {
-      type: rABS ? 'binary' : 'array'
+      type: rABS ? 'binary' : 'array',
     })
     processWorkBook(wb)
   }
@@ -83,9 +82,9 @@ var isNum = function(c) {
 var isDiv = function(c) {
   return c == ':'
 }
-var parseTime = function(str) {
+var parseTime = function (str) {
+  // 时间与时间之间有横线或其他： 10:00 - 12:00，这个需要处理一下
   var times = []
-  var onTimeParse = false
   var expectHour = true
   var expectMin = false
   var expectDivide = false // like : or other divide char
