@@ -1,5 +1,5 @@
 var __main = function() {
-  var Mouse = []
+  var Mouse = [] // TODO 这个应该废弃
   var timeUnit = [4, ]
   var screenPart = Screen(Mouse, timeUnit)
 
@@ -21,6 +21,7 @@ var __main = function() {
     var y = event.pageY - 6
     Mouse[0] = x
     Mouse[1] = y
+    // 这里触发事件
   })
   window.addEventListener('mousedown', function(event) {
     // 6 为手动校准量
