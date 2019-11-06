@@ -28,7 +28,11 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
 
   o.draw = function(context) {
     if (o.drawOrNot) {
-      context.strokeRect(x, y, Width, Height)
+      var x = o.startPointX
+      var y = o.startPointY
+      var width = o.width
+      var height = o.height
+      context.strokeRect(x, y, width, height)
     }
 
     o.subUnits.forEach(e => {
