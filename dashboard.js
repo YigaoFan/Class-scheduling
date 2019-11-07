@@ -5,25 +5,18 @@ var Dashboard = function(canvas) {
     startPoint: [10, 10],
     dayWidth: 30,
     dayHeight: 150,
-    viewUnit: ViewUnit(o.startPoint[0], o.startPoint[1], canvas.width, canvas.height),
+    nowColor: genColor(),
+    viewUnit: ViewUnit(o.startPoint[0], o.startPoint[1], canvas.width, canvas.height, false),
     timeData: TimeData(),
-  }
-  var timeData = TimeData()
-  var nowColor = genColor()
-  var changeColor = function() {
-    nowColor = genColor()
-  }
-  var traverseWeek = function(callBack) {
-
-  }
-  var traverseDay = function(callBack) {
-
-  }
-  var traverseTimeUnit = function(callBack) {
-    
   }
 
   o.init = function(weekCount, dayCount) {
+    // 下面这两个 init 应该同步，所以应该归到同一个方法里
+    // 时间的显示应该也是
+    // init time data
+    o.timeData.init(weekCount, dayCount)
+    // init view unit
+    // 下面这些代码应该可以分到 ViewUnit 里面
     var gap = 10
     var startX = o.startPoint[0]
     var startY = o.startPoint[1]
@@ -40,22 +33,23 @@ var Dashboard = function(canvas) {
 
       o.viewUnit.addSubUnit(weekView)
     }
+    
+    o.viewUnit.draw(context)
   }
 
   o.tryAddTimeUnit = function(x, y) {
-    if (!timeData.blockMode) {
+    if (!o.timeData.blockMode || !o.viewUnit.contain(x, y)) {
       return
     }
 
-    // iterate week
-    if (notInWeek) {
-      return
+    var select = o.viewUnit.trySelectUnit(x, y, o.nowColor)
+    if (!select) {
+      // change color
+      o.nowColor = genColor()
     }
-
-    // calculate the x, y belong to which
-    var addIfIn = function(unitX, unitY, weekIndex) {
-
-    }
+    // convert select to a specific format
+    // then pass it to timeData
+    // get data from timeData, then refresh UI
   }
 
   o.addDay = function() {
@@ -67,7 +61,7 @@ var Dashboard = function(canvas) {
   }
 
   o.draw = function() {
-    
+    o.viewUnit.draw(context)
   }
 
   o.clear = function() {
@@ -91,7 +85,7 @@ var Dashboard = function(canvas) {
   }
 
   o.switchMode = function() {
-    timeData.switchMode()
+    o.timeData.switchMode()
     // refresh dashboard view
   }
 
