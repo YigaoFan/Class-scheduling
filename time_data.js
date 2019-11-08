@@ -1,5 +1,6 @@
-var TimeData = function() {
+var TimeData = function(range) {
   var o = {
+    range: range,
     blockMode: true,
     unitCount: 10,
     times: [],
@@ -13,35 +14,50 @@ var TimeData = function() {
 
   }
 
-  // only for block mode
-  var unitLen = function() {
-    return (1 / o.unitCount) * 100
+  // [8.0 - 12.0]
+  var calTimeStartAndLenInDecimal = function(detailTime) {
+    var totalLen = range[1] - range[0]
+    var start = (detailTime[0] - range[0]) / totalLen
+    var len = (detailTime[1] - detailTime[0]) / totalLen
+    return [ start, len, ]
   }
 
   var transformBlockTime = function(timeData) {
     var transformed = []
     timeData.forEach(e => {
-      // 0 1 2 block 的时间应该是这样的，只需要知道哪些是确定的
+      // e[2]: 0 1 2 block 的时间应该是这样的，只需要知道哪些是确定的
       transformed.push([
         e[0], // week
         e[1], // day
-        (e[2] / o.unitCount) * 100, // start
-        (1 / o.unitCount) * 100, // len
+        e[2] / o.unitCount, // start
+        1 / o.unitCount, // len
       ])
     })
+
+    return transformed
   }
 
   var transformDetailTime = function(timeData) {
     var transformed = []
     timeData.forEach(e => {
-      
+      transformed.push([
+        e[0],
+        e[1],
+      ].concat(calTimeStartAndLenInDecimal(e[2])))
     })
+
+    return transformed
   }
 
   o.init = function(weekCount, dayCount) {
     for (var i = 0; i < weekCount; ++i) {
       o.addWeek(dayCount)
     }
+  }
+
+  // only for block mode
+  o.unitLen = function() {
+    return 1 / o.unitCount
   }
 
   o.setUnitCount = function(n) {

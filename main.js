@@ -33,12 +33,19 @@ var __main = function() {
   var uploadFileButton = document.getElementById("file")
   uploadFileButton.addEventListener('change', attachFileHandler, false)
 
-  // Refresh
-  setInterval(function() {
-    // this will make line be grey not black
-    screenPart.clear()
-    screenPart.draw()
-  }, 1000 / 30)
+  var debug = false
+  if (debug) {
+    var canvas = document.getElementById('id-canvas')
+    var d = Dashboard(canvas)
+    d.init(2, 7)
+  } else {
+    // Refresh
+    setInterval(function () {
+      // this will make line be grey not black
+      screenPart.clear()
+      screenPart.draw()
+    }, 1000 / 30)
+  }
 }
 
 __main()

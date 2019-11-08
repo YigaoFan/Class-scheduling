@@ -1,8 +1,8 @@
 var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = true) {
   var o = {
     drawOrNot: drawOrNot,
-    startPointX: startPointX,
-    startPointY: startPointY,
+    startX: startPointX,
+    startY: startPointY,
     width: width,
     height: height,
     subUnits: [],
@@ -21,6 +21,23 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
   //     }
   //   }
   // }
+  o.init = function(weekCount, dayCount, dayHeight, dayWidth) {
+    var gap = 10
+    for (var i = 0; i < weekCount; ++i) {
+      var weekY = i * (dayHeight + gap) + o.startY
+      var weekWidth = dayCount * dayWidth
+      var weekView = ViewUnit(o.startX, weekY, weekWidth, dayHeight)
+
+      for (var j = 0; j < dayCount; ++j) {
+        var dayX = j * dayWidth + o.startX
+        var dayView = ViewUnit(dayX, weekY, dayWidth, dayHeight)
+        weekView.addSubUnit(dayView)
+      }
+
+      o.addSubUnit(weekView)
+    }
+
+  }
 
   o.addSubUnit = function (unit) {
     o.subUnits.push(unit)
@@ -31,8 +48,8 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
   }
 
   o.contain = function (pointX, pointY) {
-    if (pointX > o.startPointX && pointX < o.startPointX + o.width) {
-      if (pointY > o.startPointY && pointY < o.startPointY + o.height) {
+    if (pointX > o.startX && pointX < o.startX + o.width) {
+      if (pointY > o.startY && pointY < o.startY + o.height) {
         return true
       }
     }
@@ -40,10 +57,10 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
     return false
   }
 
-  o.draw = function(context) {
+  o.draw = function(context, timeData) {
     if (o.drawOrNot) {
-      var x = o.startPointX
-      var y = o.startPointY
+      var x = o.startX
+      var y = o.startY
       var width = o.width
       var height = o.height
       context.strokeRect(x, y, width, height)
@@ -52,29 +69,29 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
         context.fillStyle = o.color
         context.fillRect(x, y, width, height)
       }
+      // draw timeData
     }
 
     o.subUnits.forEach(e => {
-      e.draw()
+      e.draw(context)
     })
   }
 
+  // [iWeek, iDay, viewUnit]
   o.trySelectUnit = function(x, y, color) {
     if (o.contain(x, y)) {
       if (!o.haveSubUnit()) {
-        o.selected = true
+        o.selected = true // 这里不能利用这个判断是否显示，需要读数据决定
         o.color = color
-        return o
+        return [o]
       }
 
       for (var i = 0; i < o.subUnits.length; ++i) {
         var u = o.subUnits[i]
         var select = u.trySelectUnit(x, y)
-        if (select == null) {
-          continue
+        if (select) {
+          return select.unshift(i)
         }
-
-        return select
       }
     }
 
@@ -90,6 +107,10 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
       o.selected = false
       o.color = null
     }
+  }
+
+  o.calStartDecimal = function(viewUnit) {
+    return (viewUnit.startX - o.startX) / o.height
   }
 
   return o

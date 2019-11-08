@@ -1,53 +1,40 @@
 // 对外，还是 screen 来处理各种触发事件
-var Dashboard = function(canvas) {
-  var context = canvas.getContext('2d')
+var Dashboard = function(canvas, range = [8, 20]) {
+    var context = canvas.getContext('2d')
   var o = {
     startPoint: [10, 10],
     dayWidth: 30,
     dayHeight: 150,
     nowColor: genColor(),
-    viewUnit: ViewUnit(o.startPoint[0], o.startPoint[1], canvas.width, canvas.height, false),
-    timeData: TimeData(),
+    timeData: TimeData(range),
   }
+  o.viewUnit = ViewUnit(o.startPoint[0], o.startPoint[1], canvas.width, canvas.height, false),
+
 
   o.init = function(weekCount, dayCount) {
-    // 下面这两个 init 应该同步，所以应该归到同一个方法里
-    // 时间的显示应该也是
-    // init time data
+    // 下面这种 init 还是分开的，还是不那么好
     o.timeData.init(weekCount, dayCount)
-    // init view unit
-    // 下面这些代码应该可以分到 ViewUnit 里面
-    var gap = 10
-    var startX = o.startPoint[0]
-    var startY = o.startPoint[1]
-    for (var i = 0; i < weekCount; ++i) {
-      var weekY = i * (o.dayHeight + gap) + startY
-      var weekWidth = dayCount * o.dayWidth
-      var weekView = ViewUnit(startX, weekY, weekWidth, o.dayHeight)
-
-      for (var j = 0; j < dayCount; ++j) {
-        var dayX = j * o.dayWidth + startX
-        var dayView = ViewUnit(dayX, weekY, o.dayWidth, o.dayHeight)
-        weekView.addSubUnit(dayView)
-      }
-
-      o.viewUnit.addSubUnit(weekView)
-    }
-    
-    o.viewUnit.draw(context)
+    o.viewUnit.init(weekCount, dayCount, o.dayHeight, o.dayWidth)
+    o.draw()
   }
 
+  // 这个可能后期会做精确时间模式下的选中，暂时下面只处理选中 ViewUnit 的情况
   o.tryAddTimeUnit = function(x, y) {
     if (!o.timeData.blockMode || !o.viewUnit.contain(x, y)) {
       return
     }
 
-    var select = o.viewUnit.trySelectUnit(x, y, o.nowColor)
-    if (!select) {
-      // change color
-      o.nowColor = genColor()
+    var selectUnit = o.viewUnit.trySelectUnit(x, y, o.nowColor)
+    if (!selectUnit) {
+      return
     }
+
+    // change color
+    o.nowColor = genColor()
+
     // convert select to a specific format
+    var startDecimal = o.viewUnit.calStartDecimal(selectUnit[2])
+    var passToTimeData= [selectUnit[0], selectUnit[1], startDecimal, o.timeData.unitLen()]
     // then pass it to timeData
     // get data from timeData, then refresh UI
   }
@@ -61,7 +48,7 @@ var Dashboard = function(canvas) {
   }
 
   o.draw = function() {
-    o.viewUnit.draw(context)
+    o.viewUnit.draw(context, o.timeData.getFormatTimeData())
   }
 
   o.clear = function() {
