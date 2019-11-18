@@ -3,6 +3,11 @@ var __main = function() {
   var timeUnit = [4, ]
   var screenPart = Screen(Mouse, timeUnit)
 
+  var canvas = document.getElementById('id-canvas')
+  var d = Dashboard(canvas)
+  d.init(2, 7)
+
+
   registerElementEventHandler('#id-input-speed', function() {
     var input = event.target
     // 0.5 1 1.5 2 3 4 min max
@@ -25,19 +30,20 @@ var __main = function() {
   })
   window.addEventListener('mousedown', function(event) {
     // 6 为手动校准量
-    var x = event.pageX - 6
-    var y = event.pageY - 6
-    screenPart.tryAddUnit(x, y)
+    var x = event.pageX// - 6
+    var y = event.pageY// - 6
+    // screenPart.tryAddUnit(x, y)
+    d.tryAddTimeUnit(x, y)
   })
 
   var uploadFileButton = document.getElementById("file")
   uploadFileButton.addEventListener('change', attachFileHandler, false)
 
-  var debug = false
+  var debug = true
   if (debug) {
-    var canvas = document.getElementById('id-canvas')
-    var d = Dashboard(canvas)
-    d.init(2, 7)
+    // var canvas = document.getElementById('id-canvas')
+    // var d = Dashboard(canvas)
+    // d.init(2, 7)
   } else {
     // Refresh
     setInterval(function () {

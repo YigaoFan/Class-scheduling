@@ -36,7 +36,6 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
 
       o.addSubUnit(weekView)
     }
-
   }
 
   o.addSubUnit = function (unit) {
@@ -90,7 +89,9 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
         var u = o.subUnits[i]
         var select = u.trySelectUnit(x, y)
         if (select) {
-          return select.unshift(i)
+          // log('select: ', select)
+          select.unshift(i)
+          return select
         }
       }
     }
@@ -109,8 +110,12 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
     }
   }
 
-  o.calStartDecimal = function(viewUnit) {
-    return (viewUnit.startX - o.startX) / o.height
+  o.calStartDecimal = function(y) {
+    log('view y: ', y)
+    log('o y: ', o.startY)
+    log('o y: ', o.height)
+
+    return (y - o.startY) / o.height
   }
 
   return o

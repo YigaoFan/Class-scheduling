@@ -1,3 +1,4 @@
+// 加一个计算各个班级之间的时间重合度的功能，方便班级之间的分组
 var TimeData = function(range) {
   var o = {
     range: range,
@@ -72,10 +73,10 @@ var TimeData = function(range) {
   }
 
   o.addATime = function(week, day, percentPosition, percentLen) {
-    var weekTimes = times[week - 1]
-    var dayTimes = weekTimes[day - 1]
+    var weekTimes = o.times[week]
+    var dayTimes = weekTimes[day]
 
-    if (blockMode) {
+    if (o.blockMode) {
       var start = dayLen() * percentPosition / 100
       dayTimes.push(start)
     } else {
