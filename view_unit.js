@@ -10,6 +10,13 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
     color: null,
   }
 
+   var drawLine = function(context, x, y) {
+    context.beginPath()
+    context.moveTo(o.startX, y)
+    context.lineTo(o.startX + o.width, y)
+    context.closePath()
+    context.stroke()
+  }
   // TODO
   // o.traverseLeafUnit = function(callBack) {
   //   if (!o.haveSubUnit()) {
@@ -77,17 +84,20 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
   }
 
   // [iWeek, iDay, viewUnit]
-  o.trySelectUnit = function(x, y, color) {
+  o.trySelectUnit = function(context, x, y, color) {
+    // log('Start select unit', x, y)
     if (o.contain(x, y)) {
       if (!o.haveSubUnit()) {
+        drawLine(context, x, y)
         o.selected = true // 这里不能利用这个判断是否显示，需要读数据决定
         o.color = color
+        log('Select one: ', o)
         return [o]
       }
 
       for (var i = 0; i < o.subUnits.length; ++i) {
         var u = o.subUnits[i]
-        var select = u.trySelectUnit(x, y)
+        var select = u.trySelectUnit(context, x, y, color)
         if (select) {
           // log('select: ', select)
           select.unshift(i)
@@ -97,6 +107,20 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
     }
 
     return null
+  }
+
+  o.mouseMove = function(context, x, y, color) {
+    if (o.contain(x, y)) {
+      if (!o.haveSubUnit()) {
+        drawLine(context, x, y)
+        return
+      } else {
+        for (var i = 0; i < o.subUnits.length; ++i) {
+          var u = o.subUnits[i]
+          u.mouseMove(context, x, y, color)
+        }
+      }
+    }
   }
 
   o.clear = function() {

@@ -1,7 +1,7 @@
 // 加一个计算各个班级之间的时间重合度的功能，方便班级之间的分组
 var TimeData = function(range) {
   var o = {
-    range: range,
+    range: range, // format like [8, 20]
     blockMode: true,
     unitCount: 10,
     times: [],
@@ -12,7 +12,7 @@ var TimeData = function(range) {
   }
 
   var dayLen = function() {
-
+    return range[1] - range[0]
   }
 
   // [8.0 - 12.0]
@@ -23,9 +23,9 @@ var TimeData = function(range) {
     return [ start, len, ]
   }
 
-  var transformBlockTime = function(timeData) {
+  var transformBlockTime = function(timeDatas) {
     var transformed = []
-    timeData.forEach(e => {
+    timeDatas.forEach(e => {
       // e[2]: 0 1 2 block 的时间应该是这样的，只需要知道哪些是确定的
       transformed.push([
         e[0], // week
@@ -75,13 +75,12 @@ var TimeData = function(range) {
   o.addATime = function(week, day, percentPosition, percentLen) {
     var weekTimes = o.times[week]
     var dayTimes = weekTimes[day]
+    var start = dayLen() * percentPosition + range[0]
 
     if (o.blockMode) {
-      var start = dayLen() * percentPosition / 100
       dayTimes.push(start)
     } else {
-      var start = dayLen() * percentPosition / 100
-      var len = dayLen() * percentLen / 100
+      var len = dayLen() * percentLen
       dayTimes.push([start, len])
     }
   }

@@ -23,15 +23,15 @@ var __main = function() {
   window.addEventListener('mousemove', function(event) {
     // 6 为手动校准量
     var x = event.pageX - 6
-    var y = event.pageY - 6
+    var y = event.pageY - 7
     Mouse[0] = x
     Mouse[1] = y
-    // 这里触发事件
+    d.mouseMove(x, y)
   })
   window.addEventListener('mousedown', function(event) {
     // 6 为手动校准量
-    var x = event.pageX// - 6
-    var y = event.pageY// - 6
+    var x = event.pageX - 6
+    var y = event.pageY - 7
     // screenPart.tryAddUnit(x, y)
     d.tryAddTimeUnit(x, y)
   })
