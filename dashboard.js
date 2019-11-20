@@ -10,6 +10,12 @@ var Dashboard = function(canvas, range = [8, 20]) {
     timeData: TimeData(range),
   }
 
+  var getColor = function() {
+    var now = o.nowColor
+    o.nowColor = genColor()
+    return now
+  }
+
   var context = canvas.getContext('2d')
   o.viewUnit = ViewUnit(o.startPoint[0], o.startPoint[1], canvas.width, canvas.height, false)
 
@@ -28,7 +34,13 @@ var Dashboard = function(canvas, range = [8, 20]) {
 
     o.clear()
     o.draw()
-    o.viewUnit.mouseMove(context, x, y, o.nowColor)
+    var selectUnit = o.viewUnit.trySelectUnit(context, x, y, o.nowColor)
+    if (!selectUnit) {
+      return
+    }
+    var startDecimal = selectUnit[2].calStartDecimal(y)
+    var unitPos =o.timeData.convertToFitUnit(startDecimal, o.timeData.unitLen())
+    o.viewUnit.mouseMove(context, selectUnit[0], selectUnit[1], unitPos[0], unitPos[1], o.nowColor)
   }
 
   // 这个可能后期会做精确时间模式下的选中，暂时下面只处理选中 ViewUnit 的情况
@@ -44,12 +56,9 @@ var Dashboard = function(canvas, range = [8, 20]) {
       return
     }
 
-    // change color
-    o.nowColor = genColor()
-
-    // convert select to a specific format
-    var startDecimal = (y - selectUnit[2].startY) / selectUnit[2].height
-    o.timeData.addATime(selectUnit[0], selectUnit[1], startDecimal, o.timeData.unitLen())
+    var startDecimal = selectUnit[2].calStartDecimal(y)
+    // week, day, select ViewUnit, color
+    o.timeData.addATime(selectUnit[0], selectUnit[1], startDecimal, o.timeData.unitLen(), getColor())
     log('Week index: ', selectUnit[0])
     log('Day index: ', selectUnit[1])
     log('Start pos: ', startDecimal)
@@ -90,7 +99,9 @@ var Dashboard = function(canvas, range = [8, 20]) {
   }
 
   o.clearClickedTime = function() {
-
+    o.timeData.clearSavedData()
+    o.clear()
+    o.draw()
   }
 
   o.showSameTimeOfExistedWeek = function() {

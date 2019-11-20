@@ -80,7 +80,7 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
 
         timeDatas.forEach(time => {
           // log('Time show:', time)
-          context.fillStyle = 'rgb(124,167,1)' // TODO color will same, fix this bug
+          context.fillStyle = time[2]
           context.fillRect(x, y + (time[0] * height), width, time[1] * height)
         })
 
@@ -117,19 +117,15 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
     return null
   }
 
-  o.mouseMove = function(context, x, y, color) {
-    if (o.contain(x, y)) {
-      if (!o.haveSubUnit()) {
-        // TODO modify
-        drawLine(context, x, y)
-        return
-      } else {
-        for (var i = 0; i < o.subUnits.length; ++i) {
-          var u = o.subUnits[i]
-          u.mouseMove(context, x, y, color)
-        }
-      }
-    }
+  o.mouseMove = function(context, week, day, startDecimal, lenDecimal, color) {
+    var w = o.subUnits[week]
+    var d = w.subUnits[day]
+    var x = d.startX
+    var y = d.startY
+    var height = d.height
+    var width = d.width
+    context.fillStyle = color
+    context.fillRect(x, y + (startDecimal * height), width, lenDecimal * height)
   }
 
   o.clear = function() {
@@ -144,10 +140,6 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
   }
 
   o.calStartDecimal = function(y) {
-    log('view y: ', y)
-    log('o y: ', o.startY)
-    log('o y: ', o.height)
-
     return (y - o.startY) / o.height
   }
 

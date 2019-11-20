@@ -73,24 +73,28 @@ var TimeData = function(range) {
     resetData()
   }
 
+  o.convertToFitUnit = function(percentPosition, percentLen) {
+    for (var i = 0, lowRange = 0; i < o.unitCount; ++i, lowRange+=o.unitLen()) {
+      if (lowRange < percentPosition && percentPosition <= (lowRange+o.unitLen())) {
+        return [
+          lowRange,
+          percentLen,
+        ]
+      }
+    }
+  }
+
   // 注意：很多操作都是只限定 blockMode 下操作
-  o.addATime = function(week, day, percentPosition, percentLen) {
+  o.addATime = function(week, day, percentPosition, percentLen, color) {
     if (!o.blockMode) {
       return
     }
 
     var weekTimes = o.times[week]
     var dayTimes = weekTimes[day]
-
-    for (var i = 0, lowRange = 0; i < o.unitCount; ++i, lowRange+=o.unitLen()) {
-      if (lowRange < percentPosition && percentPosition <= (lowRange+o.unitLen())) {
-        dayTimes.push([
-          lowRange,
-          percentLen,
-        ])
-      }
-    }
-    // log('Add result: ', dayTimes)
+    var data = o.convertToFitUnit(percentPosition, percentLen)
+    data.push(color)
+    dayTimes.push(data)
   }
 
   o.tryAddATime = function(week, day, percentPosition, percentLen) {
@@ -128,6 +132,14 @@ var TimeData = function(range) {
   o.queryTimesInADay = function(weekIndex, dayIndex) {
     var weekTimes = o.times[weekIndex]
     return weekTimes[dayIndex]
+  }
+
+  o.clearSavedData = function() {
+    o.times.forEach(week => {
+      week.forEach(day => {
+        day.length = 0
+      })
+    })
   }
 
   return o
