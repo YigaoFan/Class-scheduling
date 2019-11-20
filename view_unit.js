@@ -63,7 +63,7 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
     return false
   }
 
-  o.draw = function(context, timeData) {
+  o.draw = function(context, timeDatasQueryerCurry) {
     if (o.drawOrNot) {
       var x = o.startX
       var y = o.startY
@@ -71,27 +71,35 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
       var height = o.height
       context.strokeRect(x, y, width, height)
 
-      if (o.selected) {
-        context.fillStyle = o.color
-        context.fillRect(x, y, width, height)
-      }
       // draw timeData
+      if (Array.isArray(timeDatasQueryerCurry)) {
+        var timeDatas = timeDatasQueryerCurry
+        if (timeDatas.length == 0) {
+          return
+        }
+
+        timeDatas.forEach(time => {
+          // log('Time show:', time)
+          context.fillStyle = 'rgb(124,167,1)' // TODO color will same, fix this bug
+          context.fillRect(x, y + (time[0] * height), width, time[1] * height)
+        })
+
+      }
     }
 
-    o.subUnits.forEach(e => {
-      e.draw(context)
+    o.subUnits.forEach((e, i) => {
+      e.draw(context, timeDatasQueryerCurry(i))
     })
   }
 
   // [iWeek, iDay, viewUnit]
   o.trySelectUnit = function(context, x, y, color) {
-    // log('Start select unit', x, y)
     if (o.contain(x, y)) {
       if (!o.haveSubUnit()) {
-        drawLine(context, x, y)
+        // drawLine(context, x, y)
         o.selected = true // 这里不能利用这个判断是否显示，需要读数据决定
         o.color = color
-        log('Select one: ', o)
+        // log('Select one: ', o)
         return [o]
       }
 
@@ -112,6 +120,7 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
   o.mouseMove = function(context, x, y, color) {
     if (o.contain(x, y)) {
       if (!o.haveSubUnit()) {
+        // TODO modify
         drawLine(context, x, y)
         return
       } else {

@@ -1,10 +1,11 @@
 // 加一个计算各个班级之间的时间重合度的功能，方便班级之间的分组
+// detail mode 下不支持使用鼠标点击修改时间o
 var TimeData = function(range) {
   var o = {
     range: range, // format like [8, 20]
     blockMode: true,
     unitCount: 10,
-    times: [],
+    times: [], // 存储 ViewUnit 显示的格式的数据，当需要输出具体时间的时候，再利用函数转换
   }
 
   var resetData = function() {
@@ -72,17 +73,24 @@ var TimeData = function(range) {
     resetData()
   }
 
+  // 注意：很多操作都是只限定 blockMode 下操作
   o.addATime = function(week, day, percentPosition, percentLen) {
+    if (!o.blockMode) {
+      return
+    }
+
     var weekTimes = o.times[week]
     var dayTimes = weekTimes[day]
-    var start = dayLen() * percentPosition + range[0]
 
-    if (o.blockMode) {
-      dayTimes.push(start)
-    } else {
-      var len = dayLen() * percentLen
-      dayTimes.push([start, len])
+    for (var i = 0, lowRange = 0; i < o.unitCount; ++i, lowRange+=o.unitLen()) {
+      if (lowRange < percentPosition && percentPosition <= (lowRange+o.unitLen())) {
+        dayTimes.push([
+          lowRange,
+          percentLen,
+        ])
+      }
     }
+    // log('Add result: ', dayTimes)
   }
 
   o.tryAddATime = function(week, day, percentPosition, percentLen) {
@@ -104,21 +112,22 @@ var TimeData = function(range) {
     o.times.push(week)
   }
 
-  o.getFormatTimeData = function() {
-    var data = []
-    o.times.forEach((weekArray, iWeek) => {
-      weekArray.forEach((dayArray, iDay) => {
-        dayArray.forEach(time => {
-          data.push([iWeek, iDay, time])
-        })
-      })
-    })
+  // o.getFormatTimeData = function() {
+  //   var data = []
+  //   o.times.forEach((weekArray, iWeek) => {
+  //     weekArray.forEach((dayArray, iDay) => {
+  //       dayArray.forEach(time => {
+  //         data.push([iWeek, iDay, time])
+  //       })
+  //     })
+  //   })
 
-    if (o.blockMode) {
-      return transformBlockTime(data)
-    }
+  //   return data
+  // }
 
-    return transformDetailTime(data)
+  o.queryTimesInADay = function(weekIndex, dayIndex) {
+    var weekTimes = o.times[weekIndex]
+    return weekTimes[dayIndex]
   }
 
   return o

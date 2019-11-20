@@ -26,8 +26,8 @@ var Dashboard = function(canvas, range = [8, 20]) {
       return
     }
 
-    context.clearRect(0, 0, canvas.width, canvas.height)
-    o.init()
+    o.clear()
+    o.draw()
     o.viewUnit.mouseMove(context, x, y, o.nowColor)
   }
 
@@ -49,11 +49,14 @@ var Dashboard = function(canvas, range = [8, 20]) {
 
     // convert select to a specific format
     var startDecimal = (y - selectUnit[2].startY) / selectUnit[2].height
-    log(startDecimal)
-    // var passToTimeData= [selectUnit[0], selectUnit[1], startDecimal, o.timeData.unitLen()]
     o.timeData.addATime(selectUnit[0], selectUnit[1], startDecimal, o.timeData.unitLen())
-    // then pass it to timeData
-    // get data from timeData, then refresh UI
+    log('Week index: ', selectUnit[0])
+    log('Day index: ', selectUnit[1])
+    log('Start pos: ', startDecimal)
+    log('len: ', o.timeData.unitLen())
+
+    o.clear()
+    o.draw()
   }
 
   o.addDay = function() {
@@ -65,11 +68,17 @@ var Dashboard = function(canvas, range = [8, 20]) {
   }
 
   o.draw = function() {
-    o.viewUnit.draw(context, o.timeData.getFormatTimeData())
+    queryerCurry = function(weekIndex) {
+      return function(dayIndex) {
+        return o.timeData.queryTimesInADay(weekIndex, dayIndex)
+      }
+    }
+    o.viewUnit.draw(context, queryerCurry)
+    // 这里如果 UI 和数据在一块，相对就好写一点了
   }
 
   o.clear = function() {
-
+    context.clearRect(0, 0, canvas.width, canvas.height)
   }
 
   o.addWeek = function() {
