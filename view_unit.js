@@ -145,7 +145,7 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
 
   // [iWeek, iDay, viewUnit]
   o.trySelectUnit = function (context, x, y, color) {
-    if (o.contain(x, y)) {
+    // if (o.contain(x, y)) {
       if (o.haveSubUnit()) {
         // o.selected = true // 这里不能利用这个判断是否显示，需要读数据决定
         // o.color = color
@@ -163,10 +163,10 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
             return select
           }
         }
-      } else {
+      } else if (o.contain(x, y)){
         return [o]
       }
-    }
+    // }
 
     return null
   }
