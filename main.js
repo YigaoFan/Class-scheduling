@@ -9,20 +9,20 @@ var __main = function() {
     // Value transform to time
     // timeUnit[0] = Number(input.value) + 1
   }, 'input')
-  // registerElementEventHandler('#id-add-week', screenPart.addWeek)
-  // registerElementEventHandler('#id-del-week', screenPart.delWeek)
-  // registerElementEventHandler('#id-add-day', screenPart.addDay)
-  // registerElementEventHandler('#id-del-day', screenPart.delDay)
+  registerElementEventHandler('#id-add-week', d.addWeek)
+  registerElementEventHandler('#id-del-week', d.delWeek)
+  registerElementEventHandler('#id-add-day', d.addDay)
+  registerElementEventHandler('#id-del-day', d.delDay)
   registerElementEventHandler('#id-clear-record', d.clearClickedTime)
   // registerElementEventHandler('#id-compare-time', screenPart.showSameTimeOfExistedWeek)
   window.addEventListener('mousemove', function(event) {
-    // 6 为手动校准量
+    // 6 和 7 为手动校准量
     var x = event.pageX - 6
     var y = event.pageY - 7
     d.mouseMove(x, y)
   })
   window.addEventListener('mousedown', function(event) {
-    // 6 为手动校准量
+    // 6 和 7 为手动校准量
     var x = event.pageX - 6
     var y = event.pageY - 7
     // screenPart.tryAddUnit(x, y)

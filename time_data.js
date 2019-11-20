@@ -1,7 +1,7 @@
 // 加一个计算各个班级之间的时间重合度的功能，方便班级之间的分组
 // detail mode 下不支持使用鼠标点击修改时间o
 var TimeData = function(range) {
-  var o = {
+  o = {
     range: range, // format like [8, 20]
     blockMode: true,
     unitCount: 10,
@@ -53,7 +53,12 @@ var TimeData = function(range) {
 
   o.init = function(weekCount, dayCount) {
     for (var i = 0; i < weekCount; ++i) {
-      o.addWeek(dayCount)
+      var week = []
+      for (var j = 0; j < dayCount; ++j) {
+        week.push([])
+      }
+
+      o.times.push(week)
     }
   }
 
@@ -107,8 +112,11 @@ var TimeData = function(range) {
     }
   }
 
-  o.addWeek = function(dayCount) {
+  o.addWeek = function() {
+    // 这个类的结构和 ViewUnit 的结构还是不太一样的，这个 times 里面直接存的数据
+    dayCount = o.times[0].length
     var week = []
+    // 当 dayCount 不是一个数的时候，下面不能运行，但再下面那句 push 竟然会运行！
     for (var i = 0; i < dayCount; ++i) {
       week.push([])
     }
@@ -116,6 +124,21 @@ var TimeData = function(range) {
     o.times.push(week)
   }
 
+  o.delWeek = function () {
+    o.times.pop()
+  }
+
+  o.delDay = function() {
+    o.times.forEach(week => {
+      week.pop()
+    })
+  }
+
+  o.addDay = function() {
+    o.times.forEach(week => {
+      week.push([])
+    })
+  }
   // o.getFormatTimeData = function() {
   //   var data = []
   //   o.times.forEach((weekArray, iWeek) => {
@@ -130,7 +153,11 @@ var TimeData = function(range) {
   // }
 
   o.queryTimesInADay = function(weekIndex, dayIndex) {
+    // log('Times: ', o.times)
+    // log('Week index: ', weekIndex)
+    // log('Day index: ', dayIndex)
     var weekTimes = o.times[weekIndex]
+    // log('Week time: ', weekTimes)
     return weekTimes[dayIndex]
   }
 
