@@ -1,5 +1,5 @@
 var __main = function() {
-  var canvas = document.getElementById('id-canvas')
+  var canvas = document.getElementById('id-canvas-0')
   var d = Dashboard(canvas)
   d.init(2, 7)
 

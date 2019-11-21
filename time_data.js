@@ -169,5 +169,77 @@ var TimeData = function(range) {
     })
   }
 
+  var isSameTime = function(time1, time2) {
+    // log('Time1: ', time1)
+    // log('Time2: ', time2)
+    var e = 0.00001
+    for (var i = 0; i < 2; ++i) {
+      if ((time1[i]-time2[i]) > e) { // 这里有浮点数比较，可能会产生不精确的结果
+        return false
+      }
+    }
+
+    return true
+  }
+
+  // 和 week 拥有一样的层次结构
+  var computeSameTimesBetweenWeek = function (week1, week2) {
+    if (week1 == null) {
+      return week2
+    }
+
+    var sameInWeek = []
+    week1.forEach((day, i) => {
+      var sameInDay = []
+      day.forEach(time1 => {
+        week2[i].forEach(time2 => {
+          if (isSameTime(time1, time2)) {
+            sameInDay.push(time1)
+          }
+        })
+      })
+      sameInWeek.push(sameInDay)
+    })
+
+    return sameInWeek
+  }
+
+  o.computeOverlapTime = function () {
+    o.clearDuplicateTime()
+    // 在 Block Mode 下可能会存在由于多次点击而存在相同时间多次出现
+    var sameTimes = null
+    o.times.forEach(week => {
+      sameTimes = computeSameTimesBetweenWeek(sameTimes, week)
+    })
+
+    return sameTimes
+  }
+
+  forTest = o.computeOverlapTime
+
+  var clearDuplicateInDay = function (sortedTimesOfDay) {
+    var times = sortedTimesOfDay
+    for (var i = 0; i < sortedTimesOfDay.length-1; ++i) {
+      if (isSameTime(times[i], times[i+1])) {
+        times.splice(i, 1)
+        clearDuplicateInDay(times)
+        break
+      }
+    }
+  }
+
+  o.clearDuplicateTime = function() {
+    if (!o.blockMode) {
+      return
+    }
+
+    o.times.forEach(week => {
+      week.forEach(day => {
+        day.sort()
+        clearDuplicateInDay(day) // 这里动了数组里的数据，可能会对显示有影响
+      })
+    })
+  }
+
   return o
 }

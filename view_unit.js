@@ -6,8 +6,6 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
     width: width,
     height: height,
     subUnits: [],
-    selected: false,
-    color: null,
   }
 
 
@@ -147,12 +145,6 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
   o.trySelectUnit = function (context, x, y, color) {
     // if (o.contain(x, y)) {
       if (o.haveSubUnit()) {
-        // o.selected = true // 这里不能利用这个判断是否显示，需要读数据决定
-        // o.color = color
-        // log('Select one: ', o)
-        // return [o]
-        // }
-
         // log('SubUnit: ', o.subUnits)
         for (var i = 0; i < o.subUnits.length; ++i) {
           var u = o.subUnits[i]
@@ -180,17 +172,6 @@ var ViewUnit = function (startPointX, startPointY, width, height, drawOrNot = tr
     var width = d.width
     context.fillStyle = color
     context.fillRect(x, y + (startDecimal * height), width, lenDecimal * height)
-  }
-
-  o.clear = function () {
-    if (o.haveSubUnit()) {
-      o.subUnits.forEach(e => {
-        e.clear()
-      })
-    } else {
-      o.selected = false
-      o.color = null
-    }
   }
 
   o.calStartDecimal = function (y) {

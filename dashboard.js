@@ -40,7 +40,7 @@ var Dashboard = function (canvas, range = [8, 20]) {
     if (!selectUnit) {
       return
     }
-    log('On unit: ', selectUnit)
+    // log('On unit: ', selectUnit)
 
     var startDecimal = selectUnit[2].calStartDecimal(y)
     var unitPos = o.timeData.convertToFitUnit(startDecimal, o.timeData.unitLen())
@@ -88,6 +88,7 @@ var Dashboard = function (canvas, range = [8, 20]) {
   }
 
   o.draw = function () {
+
     queryerCurry = function (weekIndex) {
       return function (dayIndex) {
         return o.timeData.queryTimesInADay(weekIndex, dayIndex)
@@ -108,6 +109,7 @@ var Dashboard = function (canvas, range = [8, 20]) {
     o.refresh()
   }
 
+  // TODO 单独删除某一周的功能
   o.delWeek = function () {
     if (o.viewUnit.subUnits.length == 1) {
       return
