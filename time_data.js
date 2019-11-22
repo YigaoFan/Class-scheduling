@@ -172,15 +172,12 @@ var TimeData = function(range) {
   var isSameTime = function(time1, time2) {
     // log('Time1: ', time1)
     // log('Time2: ', time2)
-    var e = 0.00001
     for (var i = 0; i < 2; ++i) {
-      if (Math.abs(time1[i]-time2[i]) > e) { // 这里有浮点数比较，可能会产生不精确的结果
-        // log('Res: ', false)
+      if (time1[i]-time2[i]) { // JS 中 == 有一定的宽容度
         return false
       }
     }
 
-    // log('Res: ', true)
     return true
   }
 
@@ -207,6 +204,7 @@ var TimeData = function(range) {
   }
 
   o.computeOverlapTime = function () {
+    // TODO 目前计算的 block mode 下的重叠时间，非 block mode 下的会复杂一点
     o.clearDuplicateTime()
     // 在 Block Mode 下可能会存在由于多次点击而存在相同时间多次出现
     var sameTimes = null
@@ -240,7 +238,7 @@ var TimeData = function(range) {
     o.times.forEach(week => {
       week.forEach(day => {
         day.sort()
-        clearDuplicateInDay(day) // 这里动了数组里的数据，可能会对显示有影响
+        clearDuplicateInDay(day)
       })
     })
   }
