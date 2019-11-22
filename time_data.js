@@ -9,7 +9,7 @@ var TimeData = function(range) {
   }
 
   var resetData = function() {
-    times = []
+    o.times = []
   }
 
   var dayLen = function() {
@@ -174,11 +174,13 @@ var TimeData = function(range) {
     // log('Time2: ', time2)
     var e = 0.00001
     for (var i = 0; i < 2; ++i) {
-      if ((time1[i]-time2[i]) > e) { // 这里有浮点数比较，可能会产生不精确的结果
+      if (Math.abs(time1[i]-time2[i]) > e) { // 这里有浮点数比较，可能会产生不精确的结果
+        // log('Res: ', false)
         return false
       }
     }
 
+    // log('Res: ', true)
     return true
   }
 
@@ -217,6 +219,8 @@ var TimeData = function(range) {
 
   forTest = o.computeOverlapTime
 
+  // JS 在有的情况下是不会抛异常的，比如有的操作其实不能正常运行的时候，
+  // 这个时候运行的顺序我就有些不知道了
   var clearDuplicateInDay = function (sortedTimesOfDay) {
     var times = sortedTimesOfDay
     for (var i = 0; i < sortedTimesOfDay.length-1; ++i) {
